@@ -1,3 +1,1 @@
-# ecommerce-c-
-"# ecommerce-c-" 
-"# ecommerce-c-" 
+I developed a functionable e-commerce interface using C++. This project showcases object-oriented programming principles, including classes and inheritance, to manage users, products. The project features a user-friendly interface for browsing products, adding items to a cart, and generating bills automatically. This project highlights my ability to design and implement a menu-driven command structure, ensuring a seamless shopping experience."

@@ -1,0 +1,147 @@
+#include <iostream>
+#include <string>
+
+class Product {
+protected:
+    std::string name;
+    double price;
+    int stock;
+
+public:
+    Product(std::string n, double p, int s) : name(n), price(p), stock(s) {}
+
+    std::string getName() const { return name; }
+    double getPrice() const { return price; }
+    int getStock() const { return stock; }
+    void setStock(int newStock) { stock = newStock; }
+
+    virtual void display() const {
+        std::cout << "Product: " << name << ", Price: $" << price << ", Stock: " << stock << " units" << std::endl;
+    }
+};
+
+class Electronics : public Product {
+public:
+    Electronics(std::string n, double p, int s) : Product(n, p, s) {}
+
+    void display() const override {
+        std::cout << "Electronics: " << name << ", Price: $" << price << ", Stock: " << stock << " units" << std::endl;
+    }
+};
+
+class Furniture : public Product {
+public:
+    Furniture(std::string n, double p, int s) : Product(n, p, s) {}
+
+    void display() const override {
+        std::cout << "Furniture: " << name << ", Price: $" << price << ", Stock: " << stock << " units" << std::endl;
+    }
+};
+
+class ShoppingCart {
+private:
+    Product* products[10]; // Fixed array size
+    int quantities[10];    // Fixed array size for quantities
+    int size;              // Number of items in the cart
+
+public:
+    ShoppingCart() : size(0) {}
+
+    void addProduct(Product* product, int quantity) {
+        products[size] = product;
+        quantities[size] = quantity;
+        size++;
+        std::cout << "Added " << product->getName() << " to the cart." << std::endl;
+    }
+
+    double calculateTotal() const {
+        double total = 0;
+        for (int i = 0; i < size; i++) {
+            total += products[i]->getPrice() * quantities[i];
+        }
+        return total;
+    }
+
+    void displayProducts() const {
+        for (int i = 0; i < size; i++) {
+            products[i]->display();
+            std::cout << "Quantity: " << quantities[i] << std::endl;
+        }
+    }
+};
+
+int main() {
+    Electronics electronics[3] = {
+        {"Laptop", 1000.0, 10},
+        {"Smartphone", 600.0, 15},
+        {"Television", 1200.0, 5}
+    };
+
+    Furniture furniture[3] = {
+        {"Sofa", 800.0, 10},
+        {"Table", 300.0, 20},
+        {"Chair", 100.0, 30}
+    };
+
+    ShoppingCart cart;
+
+    while (true) {
+        char userType;
+        std::cout << "Select your role:\n1. Customer\n2. Exit\n";
+        std::cin >> userType;
+
+        if (userType == '1') {
+            int choice, quantity;
+            std::cout << "Available Electronics:\n";
+            for (int i = 0; i < 3; ++i) {
+                std::cout << i + 1 << ". ";
+                electronics[i].display();
+            }
+
+            std::cout << "Available Furniture:\n";
+            for (int i = 0; i < 3; ++i) {
+                std::cout << i + 1 << ". ";
+                furniture[i].display();
+            }
+
+            std::cout << "Enter the number of the product you want to buy: ";
+            std::cin >> choice;
+
+            Product* product = nullptr;
+            if (choice >= 1 && choice <= 3) {
+                product = &electronics[choice - 1];
+            } else if (choice >= 4 && choice <= 6) {
+                product = &furniture[choice - 4];
+            } else {
+                std::cout << "Invalid choice.\n";
+                continue;
+            }
+
+            std::cout << "How many units do you want to buy? ";
+            std::cin >> quantity;
+
+            if (quantity <= product->getStock()) {
+                cart.addProduct(product, quantity);
+                product->setStock(product->getStock() - quantity);
+            } else {
+                std::cout << "Not enough stock available.\n";
+            }
+
+            char continueShopping;
+            std::cout << "Continue shopping? (y/n): ";
+            std::cin >> continueShopping;
+            if (continueShopping != 'y') {
+                std::cout << "\nYour cart:\n";
+                cart.displayProducts();
+                std::cout << "Total: $" << cart.calculateTotal() << std::endl;
+                break;
+            }
+        } else if (userType == '2') {
+            break;
+        } else {
+            std::cout << "Invalid selection!\n";
+        }
+    }
+
+    return 0;
+}
